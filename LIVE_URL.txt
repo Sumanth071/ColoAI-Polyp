@@ -1,0 +1,43 @@
+================================================================================
+Project Name: Colorectal Polyp Cancer Classification Platform (ColoAI / PolypAI)
+================================================================================
+
+Active Public Worldwide Live URL (Cloudflare Edge HTTPS):
+https://off-restructuring-healthy-drink.trycloudflare.com
+
+Vercel Deployment URL:
+https://nazma-team-p-ro.vercel.app
+
+Render Backend API Endpoint:
+https://coloai-backend.onrender.com/api
+
+GitHub Repository:
+https://github.com/Sumanth071/ColoAI-Polyp
+
+--------------------------------------------------------------------------------
+Live Demo Credentials:
+--------------------------------------------------------------------------------
+1. Administrator Persona:
+   - Email: admin@coloaipoly.org
+   - Password: Password123!
+   - 1-Click Access: Click the "Admin" button on the portal login page
+
+2. AI Researcher Persona:
+   - Email: researcher@coloaipoly.org
+   - Password: Password123!
+   - 1-Click Access: Click the "Researcher" button on the portal login page
+
+3. Clinician / Doctor Persona:
+   - Email: clinician@coloaipoly.org
+   - Password: Password123!
+   - 1-Click Access: Click the "Clinician" button on the portal login page
+
+--------------------------------------------------------------------------------
+Active Services & Features:
+--------------------------------------------------------------------------------
+- Fullstack Frontend & Backend: Active & Connected to MongoDB Atlas (coloai_prod)
+- Live AI Explainer: Attention mapping, opacity blender, SHAP features & live scan sync
+- Multilingual Voice Assistant: English, Hindi, Telugu, Tamil with neural studio audio
+- Google Play Store & 1-Tap PWA Install: Available on Portal Login
+- 1-Page Certified PDF Medical Reports: Dual researcher & clinician signature blocks
+================================================================================
