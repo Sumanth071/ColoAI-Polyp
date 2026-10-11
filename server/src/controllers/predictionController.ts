@@ -8,6 +8,7 @@ import { ModelRegistry } from '../models/Model';
 import { AIServiceClient } from '../services/aiServiceClient';
 import { logAudit } from '../middleware/auditLogger';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { notificationService } from '../services/notificationService';
 
 export const createPrediction = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -84,6 +85,22 @@ export const createPrediction = async (req: AuthRequest, res: Response): Promise
       },
       ip: req.ip,
     });
+
+    // 8. Broadcast Live Notification
+    try {
+      await notificationService.createAndBroadcast({
+        userId: user._id,
+        targetRole: 'All',
+        title: `AI Analysis Complete: ${prediction.analysisId}`,
+        message: `Polyp classified as ${aiResult.predictedClass} (${(aiResult.confidence * 100).toFixed(1)}% confidence). Review pending.`,
+        type: 'ANALYSIS',
+        severity: aiResult.predictedClass === 'Adenomatous Polyp' ? 'warning' : 'info',
+        link: `/analysis/${prediction._id}`,
+        metadata: { analysisId: prediction.analysisId, predictedClass: aiResult.predictedClass },
+      });
+    } catch (notifErr) {
+      console.warn('[PredictionController] Notification broadcast error:', notifErr);
+    }
 
     const populatedPrediction = await Prediction.findById(prediction._id)
       .populate('imageId')
@@ -233,6 +250,21 @@ export const updateReview = async (req: AuthRequest, res: Response): Promise<voi
       ip: req.ip,
     });
 
+    // Broadcast Live Review Notification
+    try {
+      await notificationService.createAndBroadcast({
+        targetRole: 'All',
+        title: `Clinical Review Completed: ${prediction.analysisId}`,
+        message: `Reviewer ${req.user?.name || 'Clinician'} updated diagnostic status to "${reviewStatus}".`,
+        type: 'REVIEW',
+        severity: 'success',
+        link: `/reviews`,
+        metadata: { analysisId: prediction.analysisId, reviewStatus },
+      });
+    } catch (notifErr) {
+      console.warn('[PredictionController] Notification broadcast error:', notifErr);
+    }
+
     const updated = await Prediction.findById(id)
       .populate('imageId')
       .populate('explanationId')
@@ -341,6 +373,22 @@ export const predictExistingImage = async (req: AuthRequest, res: Response): Pro
       },
       ip: req.ip,
     });
+
+    // Broadcast Live Notification
+    try {
+      await notificationService.createAndBroadcast({
+        userId: user._id,
+        targetRole: 'All',
+        title: `AI Analysis Complete: ${prediction.analysisId}`,
+        message: `Polyp classified as ${aiResult.predictedClass} (${(aiResult.confidence * 100).toFixed(1)}% confidence). Review pending.`,
+        type: 'ANALYSIS',
+        severity: aiResult.predictedClass === 'Adenomatous Polyp' ? 'warning' : 'info',
+        link: `/analysis/${prediction._id}`,
+        metadata: { analysisId: prediction.analysisId, predictedClass: aiResult.predictedClass },
+      });
+    } catch (notifErr) {
+      console.warn('[PredictionController] Notification broadcast error:', notifErr);
+    }
 
     const populatedPrediction = await Prediction.findById(prediction._id)
       .populate('imageId')

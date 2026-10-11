@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { PatientCase } from '../models/PatientCase';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { logAudit } from '../middleware/auditLogger';
+import { notificationService } from '../services/notificationService';
 
 export const getCases = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -107,6 +108,20 @@ export const createCase = async (req: AuthRequest, res: Response): Promise<void>
       metadata: { caseId: newCase.caseId, patientName: newCase.patientName },
       ip: req.ip,
     });
+
+    try {
+      await notificationService.createAndBroadcast({
+        targetRole: 'All',
+        title: `New Patient Case: ${newCase.caseId}`,
+        message: `Case for ${newCase.patientName} (${newCase.polypFindings || 'Findings recorded'}) added by ${newCase.endoscopist}.`,
+        type: 'CASE',
+        severity: 'info',
+        link: `/cases`,
+        metadata: { caseId: newCase.caseId },
+      });
+    } catch (notifErr) {
+      console.warn('[CaseController] Notification broadcast error:', notifErr);
+    }
 
     res.status(201).json({ success: true, message: 'Case created successfully.', case: newCase });
   } catch (error: any) {

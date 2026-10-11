@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useNotifications } from '../context/NotificationContext';
+import { NotificationDropdown } from './NotificationDropdown';
 import {
   LogOut,
   Bell,
@@ -22,6 +24,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileSidebar }) => {
   const { user, logout, quickDemoLogin } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount, isConnected, isOpen: notifOpen, setIsOpen: setNotifOpen } = useNotifications();
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
 
   const handleRoleSwitch = async (targetRole: UserRole) => {
@@ -121,14 +124,43 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleMobileSidebar }) => {
           )}
         </div>
 
-        <button
-          type="button"
-          title="Notifications"
-          aria-label="Notifications"
-          className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-        >
-          <Bell className="w-4 h-4" />
-        </button>
+        {/* Interactive Notification Bell with Badge & Live Sync indicator */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setNotifOpen(!notifOpen)}
+            title={`Notifications (${unreadCount} unread) - ${isConnected ? 'Live Sync Active' : 'Connecting...'}`}
+            aria-label="Notifications"
+            className={`p-2 rounded-xl transition-all relative ${
+              notifOpen
+                ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/80'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-transparent'
+            }`}
+          >
+            <Bell className="w-4 h-4" />
+
+            {/* Unread Pill Badge */}
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                <span className="relative inline-flex items-center justify-center rounded-full h-4 min-w-4 px-1 text-[9px] font-black bg-rose-600 text-white shadow-xs">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              </span>
+            )}
+
+            {/* Subtle Live Sync Pulse Dot when no unread notifications */}
+            {unreadCount === 0 && isConnected && (
+              <span
+                title="Live Sync Active"
+                className="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#070f26]"
+              />
+            )}
+          </button>
+
+          {/* Real-time Notification Dropdown */}
+          {notifOpen && <NotificationDropdown onClose={() => setNotifOpen(false)} />}
+        </div>
 
         <button
           type="button"

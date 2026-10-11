@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { DashboardLayout } from './layouts/DashboardLayout';
 
@@ -39,8 +40,9 @@ export const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
+        <NotificationProvider>
+          <BrowserRouter>
+            <Routes>
           {/* Public Authentication Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -150,10 +152,11 @@ export const App: React.FC = () => {
             <Route path="/settings" element={<Settings />} />
           </Route>
 
-          {/* Catch-all fallback */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
+            {/* Catch-all fallback */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   </ThemeProvider>
   );

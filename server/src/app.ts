@@ -19,6 +19,7 @@ import auditLogRoutes from './routes/auditLogRoutes';
 import caseRoutes from './routes/caseRoutes';
 import imageRoutes from './routes/imageRoutes';
 import ttsRoutes from './routes/ttsRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 import { authenticateJWT } from './middleware/authMiddleware';
 import { predictExistingImage } from './controllers/predictionController';
 
@@ -80,6 +81,7 @@ app.use('/api/audit-logs', auditLogRoutes);
 app.use('/api/cases', caseRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/tts', ttsRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.post('/api/predict', authenticateJWT, predictExistingImage);
 
 // Global Error Handler

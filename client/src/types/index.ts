@@ -131,3 +131,20 @@ export interface AuditLogItem {
   status: 'SUCCESS' | 'FAILURE' | 'WARNING';
   createdAt: string;
 }
+
+export type NotificationType = 'ANALYSIS' | 'REVIEW' | 'CASE' | 'REPORT' | 'MODEL' | 'SYSTEM';
+export type NotificationSeverity = 'info' | 'success' | 'warning' | 'error';
+
+export interface SystemNotification {
+  _id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  severity: NotificationSeverity;
+  link?: string;
+  metadata?: Record<string, any>;
+  read: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+

@@ -12,6 +12,7 @@ import { Prediction } from '../models/Prediction';
 import { Report } from '../models/Report';
 import { PatientCase } from '../models/PatientCase';
 import { PDFService } from './pdfService';
+import { notificationService } from './notificationService';
 
 export const seedDatabase = async (): Promise<void> => {
   try {
@@ -535,7 +536,10 @@ export const seedDatabase = async (): Promise<void> => {
       ]);
     }
 
-    console.log('[Seed] Database successfully initialized with default roles, users, models, datasets, and presentation demo cases.');
+    // Seed initial notifications if not already present
+    await notificationService.seedInitialNotifications();
+
+    console.log('[Seed] Database successfully initialized with default roles, users, models, datasets, notifications, and presentation demo cases.');
   } catch (error) {
     console.error('[Seed] Database initialization error:', error);
   }

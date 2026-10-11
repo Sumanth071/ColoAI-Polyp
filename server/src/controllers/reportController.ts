@@ -10,6 +10,7 @@ import { ModelRegistry } from '../models/Model';
 import { PDFService } from '../services/pdfService';
 import { logAudit } from '../middleware/auditLogger';
 import { AuthRequest } from '../middleware/authMiddleware';
+import { notificationService } from '../services/notificationService';
 
 export const generateReport = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -88,6 +89,21 @@ export const generateReport = async (req: AuthRequest, res: Response): Promise<v
       metadata: { reportId, analysisId: prediction.analysisId },
       ip: req.ip,
     });
+
+    try {
+      await notificationService.createAndBroadcast({
+        userId: req.user?._id,
+        targetRole: 'All',
+        title: `Diagnostic PDF Report Ready: ${report.reportId}`,
+        message: `Official explainable diagnostic report for ${prediction.analysisId} generated and validated.`,
+        type: 'REPORT',
+        severity: 'success',
+        link: `/reports`,
+        metadata: { reportId: report.reportId, analysisId: prediction.analysisId },
+      });
+    } catch (notifErr) {
+      console.warn('[ReportController] Notification broadcast error:', notifErr);
+    }
 
     res.status(201).json({
       success: true,

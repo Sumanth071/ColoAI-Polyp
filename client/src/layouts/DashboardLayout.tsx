@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Sidebar } from '../components/Sidebar';
+import { NotificationToast } from '../components/NotificationToast';
 
 export const DashboardLayout: React.FC = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -14,6 +15,7 @@ export const DashboardLayout: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#f8fafc] dark:bg-[#070f26] text-slate-800 dark:text-slate-100 overflow-hidden font-sans transition-colors duration-200">
+      <NotificationToast />
       <Sidebar
         mobileOpen={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
